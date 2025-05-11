@@ -10,8 +10,10 @@ export async function GET(){
   return NextResponse.json({message: "アイテム読み取り成功（オール）",
     allitems: allitems})
 } catch {
+  console.error("🔥 DB接続エラー:", err);
   return NextResponse.json({ message:"アイテム読み取り失敗（オール）"})
 }
 }
 
 export const revalidate = 0
+

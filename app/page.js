@@ -1,14 +1,21 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
 
 const getAllItems = async () => {
-  const response = await fetch("http://localhost:3000/api/item/readall", {
+  const requestHeaders = headers();
+  const host = requestHeaders.get("host") ?? "localhost:3000";
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+
+  const baseUrl = process.env.API_BASE_URL || `${protocol}://${host}`;
+  console.log("✅ BASE URL:", baseUrl);
+
+  const response = await fetch(`${baseUrl}/api/item/readall`, {
     cache: "no-store",
   });
+
   const jsonData = await response.json();
-  console.log("APIレスポンス:", jsonData);
-  const allItems = jsonData.allitems ?? []; 
-  return allItems;
+  return jsonData.allitems ?? [];
 };
 
 const ReadAllItems = async () => {
@@ -24,10 +31,10 @@ const ReadAllItems = async () => {
                 src={item.image}
                 width={750}
                 height={500}
-                alt="item-image"
+                alt={item.title}
                 priority
               />
-              <h2>¥{item.price}</h2>
+              <h2>¥{item.price?.trim()}</h2>
               <h3>{item.title}</h3>
               <p>{item.description?.substring(0, 80)}...</p>
             </div>
